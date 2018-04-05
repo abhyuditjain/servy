@@ -1,5 +1,6 @@
 defmodule Servy.Parser do
-  alias Servy.Conv, as: Conv # If we don't use "as", the alias will be the last part of the module name, in this case Conv
+  # If we don't use "as", the alias will be the last part of the module name, in this case Conv
+  alias Servy.Conv, as: Conv
 
   def parse(request) do
     [top, params_string] = String.split(request, "\n\n")
@@ -22,14 +23,17 @@ defmodule Servy.Parser do
 
   def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string
-    |> String.trim
-    |> URI.decode_query
+    |> String.trim()
+    |> URI.decode_query()
   end
 
   def parse_params(_, _), do: %{}
 
   def parse_headers(header_lines) do
-    parse_headers(header_lines, %{})    
+    Enum.reduce(header_lines, %{}, fn val, acc ->
+      [key, value] = String.split(val, ": ")
+      Map.put(acc, key, value)
+    end)
   end
 
   defp parse_headers([head | tail], headers) do
@@ -39,5 +43,4 @@ defmodule Servy.Parser do
   end
 
   defp parse_headers([], headers), do: headers
-
 end

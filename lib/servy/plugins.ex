@@ -28,5 +28,3 @@ defmodule Servy.Plugins do
 
   def track(%Conv{} = conv), do: conv
 end
-
-
